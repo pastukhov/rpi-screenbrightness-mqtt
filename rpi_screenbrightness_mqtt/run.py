@@ -27,7 +27,7 @@ class rpiSBmqtt:
 
         # initalise backlight object
         try:
-            self._backlight = Backlight()
+            self._backlight = Backlight("/sys/class/backlight/10-0045")
             self._backlight.fade_duration = self._config.getfloat('backlight', 'fade_duration')
         except:
             self._print("Could not initialise backlight component. Are you running this on a RPi?")
