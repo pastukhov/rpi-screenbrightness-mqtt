@@ -5,6 +5,7 @@
 import configparser,sys, time
 import paho.mqtt.client as mqtt
 from rpi_backlight import Backlight
+import ssl
 
 class rpiSBmqtt:
 
@@ -17,6 +18,8 @@ class rpiSBmqtt:
         self._mqttbroker = self._config.get('mqtt', 'broker')
         self._mqttuser = self._config.get('mqtt', 'user')
         self._mqttpassword = self._config.get('mqtt', 'password')
+        self._mqtt_tls = self._config.get('mqtt','tls')
+        self._mqtt_tls_port = self._config.get('mqtt','tls_port')
         self._mqttconnectedflag = False
         self._mqtt_state_topic = self._config.get('mqtt', 'state_topic')
         self._mqtt_command_topic = self._config.get('mqtt', 'command_topic')
@@ -80,10 +83,20 @@ class rpiSBmqtt:
         client.on_message = self.on_message
         client.on_disconnect = self.on_disconnect
         client.username_pw_set(self._mqttuser, self._mqttpassword)
+        if self._mqtt_tls:
+            self._print("Setting TLS")
+            client.tls_set("/etc/ssl/certs/ca-certificates.crt", tls_version=ssl.PROTOCOL_TLS)
+        else:
+            self._print("Skipping TLS setup")
         self._print("Connecting to broker "+self._mqttbroker)
         client.loop_start()
         try:
-            client.connect(self._mqttbroker, 1883, 60)
+            if self._mqtt_tls:
+                self._print("Connecting with TLS")
+                client.connect(self._mqttbroker, self._mqtt_tls_port, 60)
+            else:
+                self._print("Connecting without TLS")
+                client.connect(self._mqttbroker, 1883, 60)
         except:
             self._print("Connection failed!")
             exit(1)
