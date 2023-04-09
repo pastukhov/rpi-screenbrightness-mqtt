@@ -19,7 +19,7 @@ class rpiSBmqtt:
         self._mqttuser = self._config.get('mqtt', 'user')
         self._mqttpassword = self._config.get('mqtt', 'password')
         self._mqtt_tls = self._config.get('mqtt','tls')
-        self._mqtt_tls_port = self._config.get('mqtt','tls_port')
+        self._mqtt_tls_port = self._config.getint('mqtt','tls_port')
         self._mqttconnectedflag = False
         self._mqtt_state_topic = self._config.get('mqtt', 'state_topic')
         self._mqtt_command_topic = self._config.get('mqtt', 'command_topic')
