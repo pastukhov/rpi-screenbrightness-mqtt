@@ -83,7 +83,7 @@ class rpiSBmqtt:
         client.on_message = self.on_message
         client.on_disconnect = self.on_disconnect
         client.username_pw_set(self._mqttuser, self._mqttpassword)
-        if self._mqtt_tls:
+        if self._mqtt_tls == "True":
             self._print("Setting TLS")
             client.tls_set("/etc/ssl/certs/ca-certificates.crt", tls_version=ssl.PROTOCOL_TLS)
         else:
@@ -91,7 +91,7 @@ class rpiSBmqtt:
         self._print("Connecting to broker "+self._mqttbroker)
         client.loop_start()
         try:
-            if self._mqtt_tls:
+            if self._mqtt_tls == "True":
                 self._print("Connecting with TLS")
                 client.connect(self._mqttbroker, self._mqtt_tls_port, 60)
             else:
